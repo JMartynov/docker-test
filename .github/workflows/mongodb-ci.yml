@@ -1,0 +1,32 @@
+name: MongoDB Acceptance Test
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  acceptance-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Make scripts executable
+        run: chmod +x setup.sh start_mongodb.sh
+
+      - name: Setup Docker and Environment
+        run: sudo ./setup.sh
+
+      - name: Start MongoDB
+        run: ./start_mongodb.sh
+
+      - name: Run Acceptance Test
+        run: python3 mongodb-docker.acceptance.test.py
